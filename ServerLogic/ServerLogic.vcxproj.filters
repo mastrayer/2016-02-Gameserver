@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Code">
+      <UniqueIdentifier>{541a2914-5e35-4996-a8a7-155494840995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Server">
+      <UniqueIdentifier>{e421afdd-cd83-4a2b-8fc3-89f35eb94557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Network">
+      <UniqueIdentifier>{e0e86343-a103-4b2b-b400-be01f3e68fc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{42ccb6da-db4b-4629-9ece-ccf0983acc26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Define">
+      <UniqueIdentifier>{8128a655-7725-49f6-9310-fa8da5991dd7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Server.cpp">
+      <Filter>Code\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Code\Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Server.h">
+      <Filter>Code\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Code\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketError.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Code\Define</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerCode.h">
+      <Filter>Code\Define</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
