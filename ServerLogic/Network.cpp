@@ -9,6 +9,14 @@ Network::Network()
 
 Network::~Network()
 {
+	for (auto& session : mSessionPool)
+	{
+		if (session.RecvBuffer)
+			delete[] session.RecvBuffer;
+
+		if (session.SendBuffer)
+			delete[] session.SendBuffer;
+	}
 }
 
 void Network::Run()
@@ -27,8 +35,8 @@ void Network::Run()
 	// accept
 	if (FD_ISSET(mServerSocket, &read_set))
 		AllocateSession();
-	else // clients
-		RunCheckSelectClients(exc_set, read_set, write_set);
+	else // check request
+		ProcessRequest(exc_set, read_set, write_set);
 }
 
 SERVER_ERROR Network::Init()
@@ -45,7 +53,6 @@ SERVER_ERROR Network::Init()
 	if (setsockopt(mServerSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt)) < 0)
 		return SERVER_ERROR::SERVER_SOCKET_SO_REUSEADDR_FAIL;
 
-
 	// Bind
 	SOCKADDR_IN server_addr;
 	ZeroMemory(&server_addr, sizeof(server_addr));
@@ -59,6 +66,23 @@ SERVER_ERROR Network::Init()
 	// Listen
 	if (listen(mServerSocket, SERVER_CONFIG::backlog_size) == SOCKET_ERROR)
 		return SERVER_ERROR::SERVER_SOCKET_LISTEN_FAIL;
+	
+	// Create Session Pool
+	for (int i = 0; i < SERVER_CONFIG::max_connection; ++i)
+	{
+		Session session;
+		ZeroMemory(&session, sizeof(session));
+
+		session.Index = i;
+		session.RecvBuffer = new char[SERVER_CONFIG::MaxClientRecvBufferSize];
+		session.SendBuffer = new char[SERVER_CONFIG::MaxClientSendBufferSize];
+
+		mSessionPool.push_back(session);
+		mAvailablePoolIndex.push_back(session.Index);
+	}
+
+	FD_ZERO(&mReadFDSet);
+	FD_SET(mServerSocket, &mReadFDSet);
 
 	return SERVER_ERROR::NONE;
 }
@@ -139,5 +163,133 @@ void Network::CloseSession(const SOCKET_CLOSE CloseCase, const SOCKET socketFD, 
 	mAvailablePoolIndex.push_back(sessionId);
 	mSessionPool[sessionId].Clear();
 
-	//AddPacketQueue(sessionIndex, (short)PACKET_ID::NTF_SYS_CLOSE_SESSION, 0, nullptr);
+	PACKET::Header header = { (short)PACKET_ID::NTF_SYS_CLOSE_SESSION, 0 };
+	AddPacket(mSessionPool[sessionId], header, nullptr);
+}
+
+void Network::ProcessRequest(fd_set &exc_set, fd_set &read_set, fd_set &write_set)
+{
+	for (auto &session : mSessionPool) {
+		// 접속된 세션만 체크함
+		if (!session.IsConnected())
+			continue;
+
+		if (FD_ISSET(session.SocketFD, &exc_set)) {
+			CloseSession(SOCKET_CLOSE::SELECT_ERROR, session.SocketFD, session.Index);
+			continue;
+		}
+
+		// read
+		if (!RecvFromSocket(session, read_set))
+			continue;
+
+		// write
+		SendData(session, write_set);
+	}
+}
+bool Network::RecvFromSocket(Session &session, fd_set &read_set)
+{
+	// 읽을 데이터가 없다
+	if (!FD_ISSET(session.SocketFD, &read_set))
+		return true;
+
+	if (session.IsConnected() == false) {
+		CloseSession(SOCKET_CLOSE::SOCKET_RECV_ERROR, session.SocketFD, session.Index);
+		return false;
+	}
+
+	int recvPos = session.RemainingDataSize;
+	session.RemainingDataSize = 0;
+
+	auto recvSize = recv(session.SocketFD, &session.RecvBuffer[recvPos], (SERVER_CONFIG::max_packet_size * 2), 0);
+
+	if (recvSize == 0) {
+		CloseSession(SOCKET_CLOSE::SOCKET_RECV_ERROR, session.SocketFD, session.Index);
+		return false;
+	} else if (recvSize < 0) {
+		if (WSAGetLastError() != WSAEWOULDBLOCK) {
+			CloseSession(SOCKET_CLOSE::SOCKET_RECV_ERROR, session.SocketFD, session.Index);
+			return false;
+		}
+	}
+	session.RemainingDataSize += recvSize;
+
+
+	// 패킷 파싱
+	auto readPos = 0;
+	const auto dataSize = session.RemainingDataSize;
+	PACKET::Header* header;
+
+	while ((dataSize - readPos) >= sizeof(PACKET::Header)) {
+		header = (PACKET::Header *)&session.RecvBuffer[readPos];
+		readPos += sizeof(PACKET::Header);
+
+		// 파싱할 데이터가 더 남아있는가?
+		if (header->BodySize > 0) {
+			// 버퍼에 저장된 데이터가 짤렸는가>
+			if (header->BodySize < (dataSize - readPos))
+				break;
+
+			// 전송된 패킷이 최대 패킷 사이즈보다 큰가?
+			if (header->BodySize > SERVER_CONFIG::max_packet_size) {
+				CloseSession(SOCKET_CLOSE::SOCKET_RECV_BUFFER_PROCESS_ERROR, session.SocketFD, session.Index);
+				return false;
+			}
+		}
+
+		AddPacket(session, *header, &session.RecvBuffer[readPos]);
+
+		readPos += header->BodySize;
+	}
+
+	session.RemainingDataSize -= readPos;
+
+	// 처리하지 못한 데이터를 버퍼에 남겨두기
+	if (session.RemainingDataSize > 0)
+		memcpy(session.RecvBuffer, &session.RecvBuffer[readPos], session.RemainingDataSize);
+
+	return true;
+}
+void Network::SendData(Session &session, fd_set &write_set)
+{
+	// 쓸 데이터가 없다
+	if (!FD_ISSET(session.SocketFD, &write_set))
+		return;
+
+	if (session.IsConnected() == false) {
+		CloseSession(SOCKET_CLOSE::SOCKET_SEND_ERROR, session.SocketFD, session.Index);
+		return;
+	}
+
+	int SendSize = 0;
+	// 데이터 전송
+	if (session.SendSize > 0) { // 보낼 데이터가 있는지
+		SendSize = send(session.SocketFD, session.SendBuffer, session.SendSize, 0);
+
+		if (SendSize <= 0) {
+			CloseSession(SOCKET_CLOSE::SOCKET_SEND_ERROR, session.SocketFD, session.Index);
+			return;
+		}
+	}
+
+	// 데이터를 다 보내지 못함
+	if (SendSize < session.SendSize)
+	{
+		memmove(&session.SendBuffer[0],
+			&session.SendBuffer[SendSize],
+			session.SendSize - SendSize);
+
+		session.SendSize -= SendSize;
+	} else
+		session.SendSize = 0;
+}
+void Network::AddPacket(const Session &session, const PACKET::Header &header, char* data)
+{
+	RecvPacket packetInfo;
+	packetInfo.SessionIndex = session.Index;
+	packetInfo.PacketId = header.ID;
+	packetInfo.PacketBodySize = header.BodySize;
+	packetInfo.Data = data;
+
+	mPackets.push_back(packetInfo);
 }

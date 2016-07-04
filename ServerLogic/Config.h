@@ -15,4 +15,6 @@ namespace SERVER_CONFIG {
 
 	short MaxClientSockOptRecvBufferSize = 10240;
 	short MaxClientSockOptSendBufferSize = 10240;
+	short MaxClientRecvBufferSize = 8192;
+	short MaxClientSendBufferSize = 8192;
 }
