@@ -50,6 +50,9 @@ public:
 
 	void Run();
 	SERVER_ERROR Init();
+
+	SERVER_ERROR AddSendQueue(Session &session, const PACKET::Header &header, const char *data);
+	RecvPacket GetPacket();
 	
 private:
 	SERVER_ERROR AllocateSession();

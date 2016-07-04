@@ -86,6 +86,32 @@ SERVER_ERROR Network::Init()
 
 	return SERVER_ERROR::NONE;
 }
+SERVER_ERROR Network::AddSendQueue(Session &session, const PACKET::Header &header, const char *data)
+{
+	auto pos = session.SendSize;
+
+	if ((pos + header.BodySize + sizeof(PACKET::Header)) > SERVER_CONFIG::MaxClientSendBufferSize) {
+		return SERVER_ERROR::CLIENT_SEND_BUFFER_FULL;
+	}
+
+	memcpy(&session.SendBuffer[pos], (char*)&header, sizeof(PACKET::Header));
+	memcpy(&session.SendBuffer[pos + sizeof(PACKET::Header)], data, header.BodySize);
+	session.SendSize += (header.BodySize + sizeof(PACKET::Header));
+
+	return SERVER_ERROR::NONE;
+}
+RecvPacket Network::GetPacket()
+{
+	RecvPacket packet;
+
+	if (mPackets.empty() == false)
+	{
+		packet = mPackets.front();
+		mPackets.pop_front();
+	}
+
+	return packet;
+}
 SERVER_ERROR Network::AllocateSession()
 {
 	// accept
