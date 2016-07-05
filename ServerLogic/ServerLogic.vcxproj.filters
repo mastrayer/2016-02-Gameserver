@@ -41,5 +41,11 @@
     <ClInclude Include="ServerCode.h">
       <Filter>Code\Define</Filter>
     </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketID.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

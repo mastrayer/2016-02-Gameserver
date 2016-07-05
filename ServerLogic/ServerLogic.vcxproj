@@ -116,13 +116,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketError.h" />
+    <ClInclude Include="PacketHandler.h" />
+    <ClInclude Include="PacketID.h" />
     <ClInclude Include="ServerCode.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Server.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

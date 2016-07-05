@@ -13,8 +13,8 @@ namespace SERVER_CONFIG {
 	// 공부좀 더 해야할 설정
 	const int backlog_size = 32; // listen backlog count ------------- 더 공부해보기
 
-	short MaxClientSockOptRecvBufferSize = 10240;
-	short MaxClientSockOptSendBufferSize = 10240;
-	short MaxClientRecvBufferSize = 8192;
-	short MaxClientSendBufferSize = 8192;
+	const short MaxClientSockOptRecvBufferSize = 10240;
+	const short MaxClientSockOptSendBufferSize = 10240;
+	const short MaxClientRecvBufferSize = 8192;
+	const short MaxClientSendBufferSize = 8192;
 }
