@@ -3,6 +3,7 @@
 // 21 이상부터 시작해야 한다!!!
 enum class PACKET_ID : short
 {
+	NTF_SYS_CONNECT_SESSION = 2,
 	NTF_SYS_CLOSE_SESSION = 3,
 
 	LOGIN_IN_REQ = 21,

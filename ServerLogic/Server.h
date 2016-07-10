@@ -5,8 +5,10 @@
 #include <thread>
 #include <chrono>
 #include "PacketHandler.h"
+#include "UserManager.h"
 
 class Network;
+class UserManager;
 
 class Server
 {
@@ -23,5 +25,6 @@ private:
 
 	std::unique_ptr<Network>		mNetwork;
 	std::unique_ptr<PacketHandler>	mPacketHandler;
+	std::unique_ptr<UserManager>	mUserManager;
 };
 

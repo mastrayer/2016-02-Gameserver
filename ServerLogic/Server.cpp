@@ -22,8 +22,11 @@ bool Server::Init()
 		return false;
 	}
 
+	mUserManager = std::make_unique<UserManager>();
+	mUserManager->Init();
+
 	mPacketHandler = std::make_unique<PacketHandler>();
-	mPacketHandler->Init();
+	mPacketHandler->Init(mNetwork.get(), mUserManager.get());
 
 	mIsRunning = true;
 	return true;

@@ -16,6 +16,12 @@
     <Filter Include="Code\Define">
       <UniqueIdentifier>{8128a655-7725-49f6-9310-fa8da5991dd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Server\PacketHandler">
+      <UniqueIdentifier>{ef4a6fa7-d309-4e0e-b43b-39f5e9dea9f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\User">
+      <UniqueIdentifier>{d96389a4-7ac2-4792-8253-e278fc052153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Server.cpp">
@@ -23,6 +29,18 @@
     </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>Code\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketHandler.cpp">
+      <Filter>Code\Server\PacketHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="UserManager.cpp">
+      <Filter>Code\User</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>Code\User</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectedUserManager.cpp">
+      <Filter>Code\User</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +64,18 @@
     </ClInclude>
     <ClInclude Include="PacketID.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketHandler.h">
+      <Filter>Code\Server\PacketHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="UserManager.h">
+      <Filter>Code\User</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>Code\User</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectedUserManager.h">
+      <Filter>Code\User</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

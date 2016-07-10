@@ -276,12 +276,19 @@ bool Network::RecvFromSocket(Session &session, fd_set &read_set)
 
 	return true;
 }
+void Network::SendData(const int sessionID, const short packetID, const short size, const char * data)
+{
+}
 void Network::SendData(Session &session, fd_set &write_set)
 {
 	// 쓸 데이터가 없다
 	if (!FD_ISSET(session.SocketFD, &write_set))
 		return;
 
+	SendData(session);
+}
+void Network::SendData(Session &session)
+{
 	if (session.IsConnected() == false) {
 		CloseSession(SOCKET_CLOSE::SOCKET_SEND_ERROR, session.SocketFD, session.Index);
 		return;
@@ -306,7 +313,8 @@ void Network::SendData(Session &session, fd_set &write_set)
 			session.SendSize - SendSize);
 
 		session.SendSize -= SendSize;
-	} else
+	}
+	else
 		session.SendSize = 0;
 }
 void Network::AddPacket(const Session &session, const PACKET::Header &header, char* data)
@@ -318,4 +326,11 @@ void Network::AddPacket(const Session &session, const PACKET::Header &header, ch
 	packetInfo.Data = data;
 
 	mPackets.push_back(packetInfo);
+}
+void Network::ForcingClose(const int sessionID)
+{
+	if (!mSessionPool[sessionID].IsConnected())
+		return;
+
+	CloseSession(SOCKET_CLOSE::FORCING_CLOSE, mSessionPool[sessionID].SocketFD, sessionID);
 }
