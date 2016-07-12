@@ -96,7 +96,12 @@ SERVER_ERROR Network::AddSendQueue(Session &session, const PACKET::Header &heade
 
 	memcpy(&session.SendBuffer[pos], (char*)&header, sizeof(PACKET::Header));
 	memcpy(&session.SendBuffer[pos + sizeof(PACKET::Header)], data, header.BodySize);
-	session.SendSize += (header.BodySize + sizeof(PACKET::Header));
+	// 분명 Network::GetSession은 return type이 &session인데 왜 session과 mSessionPool[]의 주소는 다른거지?????
+	// 분명 Network::GetSession은 return type이 &session인데 왜 session과 mSessionPool[]의 주소는 다른거지?????
+	// 분명 Network::GetSession은 return type이 &session인데 왜 session과 mSessionPool[]의 주소는 다른거지?????
+	// 분명 Network::GetSession은 return type이 &session인데 왜 session과 mSessionPool[]의 주소는 다른거지?????
+	//session.SendSize += (header.BodySize + sizeof(PACKET::Header));
+	mSessionPool[session.Index].SendSize += (header.BodySize + sizeof(PACKET::Header));
 
 	return SERVER_ERROR::NONE;
 }
