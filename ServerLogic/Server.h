@@ -26,5 +26,6 @@ private:
 	std::unique_ptr<Network>		mNetwork;
 	std::unique_ptr<PacketHandler>	mPacketHandler;
 	std::unique_ptr<UserManager>	mUserManager;
+	std::unique_ptr<LobbyManager> m_pLobbyMgr;
 };
 

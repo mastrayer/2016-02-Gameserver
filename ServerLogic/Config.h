@@ -7,7 +7,10 @@ namespace SERVER_CONFIG {
 	const int max_connection = 128; // maximum client connection size
 	const int ip_length = 32; // IP Address length
 
-	
+	const int MaxLobbyCount = 2;
+	const int MaxLobbyUserCount = 50;
+	const int MaxRoomCountByLobby = 20;
+	const int MaxRoomUserCount = 4;
 
 
 	// 공부좀 더 해야할 설정

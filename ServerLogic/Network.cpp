@@ -276,19 +276,12 @@ bool Network::RecvFromSocket(Session &session, fd_set &read_set)
 
 	return true;
 }
-void Network::SendData(const int sessionID, const short packetID, const short size, const char * data)
-{
-}
 void Network::SendData(Session &session, fd_set &write_set)
 {
 	// 쓸 데이터가 없다
 	if (!FD_ISSET(session.SocketFD, &write_set))
 		return;
 
-	SendData(session);
-}
-void Network::SendData(Session &session)
-{
 	if (session.IsConnected() == false) {
 		CloseSession(SOCKET_CLOSE::SOCKET_SEND_ERROR, session.SocketFD, session.Index);
 		return;

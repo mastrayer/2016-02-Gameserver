@@ -1,5 +1,6 @@
 #include "Server.h"
 #include "Network.h"
+#include "LobbyManager.h"
 #include <iostream>
 
 
@@ -25,8 +26,15 @@ bool Server::Init()
 	mUserManager = std::make_unique<UserManager>();
 	mUserManager->Init();
 
+	m_pLobbyMgr = std::make_unique<LobbyManager>();
+	m_pLobbyMgr->Init({ SERVER_CONFIG::MaxLobbyCount,
+		SERVER_CONFIG::MaxLobbyUserCount,
+		SERVER_CONFIG::MaxRoomCountByLobby,
+		SERVER_CONFIG::MaxRoomUserCount },
+		mNetwork.get());
+
 	mPacketHandler = std::make_unique<PacketHandler>();
-	mPacketHandler->Init(mNetwork.get(), mUserManager.get());
+	mPacketHandler->Init(mNetwork.get(), mUserManager.get(), m_pLobbyMgr.get());
 
 	mIsRunning = true;
 	return true;
@@ -48,7 +56,7 @@ void Server::Run()
 			mPacketHandler->Handle(packet);
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(0));
+		mPacketHandler->StateCheck();
 	}
 }
 

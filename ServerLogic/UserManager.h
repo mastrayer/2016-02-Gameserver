@@ -4,7 +4,6 @@
 #include <deque>
 #include <string>
 #include "PacketError.h"
-#include "Config.h"
 
 class User;
 

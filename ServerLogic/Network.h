@@ -63,9 +63,7 @@ private:
 	void		 ProcessRequest(fd_set &exc_set, fd_set &read_set, fd_set &write_set);
 	bool		 RecvFromSocket(Session &session, fd_set &read_set);
 
-	void		 SendData(const int sessionID, const short packetID, const short size, const char* data);
 	void		 SendData(Session &session, fd_set &write_set);
-	void		 SendData(Session &session);
 
 	void		 AddPacket(const Session &session, const PACKET::Header &header, char* data);
 

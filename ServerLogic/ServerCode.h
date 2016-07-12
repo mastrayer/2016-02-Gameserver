@@ -44,5 +44,5 @@ struct NetError
 
 	SERVER_ERROR Error = SERVER_ERROR::NONE;
 	wchar_t Msg[MAX_NET_ERROR_STRING_COUNT] = { 0, };
-	int Vlaue = 0;
+	int Value = 0;
 };

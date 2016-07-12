@@ -1,15 +1,5 @@
 #include "ConnectedUserManager.h"
 
-
-
-ConnectedUserManager::ConnectedUserManager()
-{
-}
-
-
-ConnectedUserManager::~ConnectedUserManager()
-{
-}
 void ConnectedUserManager::Init(Network *network)
 {
 	mNetwork = network;

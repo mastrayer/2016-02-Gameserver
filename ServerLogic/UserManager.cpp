@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "UserManager.h"
 #include "User.h"
+#include "Config.h"
 
 UserManager::UserManager()
 {
@@ -31,7 +32,7 @@ ERROR_CODE UserManager::AddUser(const int sessionID, std::string ID)
 	int index = mUserPoolIndex.front();
 	mUserPoolIndex.pop_front();
 	
-	auto user = mUserPool[index];
+	auto &user = mUserPool[index];
 	user.Set(sessionID, ID);
 
 	mUserSession.insert({ sessionID, &user });

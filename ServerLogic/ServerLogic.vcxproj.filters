@@ -22,6 +22,12 @@
     <Filter Include="Code\User">
       <UniqueIdentifier>{d96389a4-7ac2-4792-8253-e278fc052153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Lobby">
+      <UniqueIdentifier>{58d0d0bd-5221-4b89-b90f-c80f1e65ff43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Room">
+      <UniqueIdentifier>{202d1c94-318c-4790-bed2-fa80ee07f63e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Server.cpp">
@@ -41,6 +47,15 @@
     </ClCompile>
     <ClCompile Include="ConnectedUserManager.cpp">
       <Filter>Code\User</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Code\Room</Filter>
+    </ClCompile>
+    <ClCompile Include="Lobby.cpp">
+      <Filter>Code\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyManager.cpp">
+      <Filter>Code\Lobby</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +91,15 @@
     </ClInclude>
     <ClInclude Include="ConnectedUserManager.h">
       <Filter>Code\User</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Code\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>Code\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyManager.h">
+      <Filter>Code\Lobby</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
